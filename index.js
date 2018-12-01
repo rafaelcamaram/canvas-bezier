@@ -99,15 +99,16 @@ function shouldPlot() {
   if (!points || !points.length || points.length != 4) {
     return;
   }
-  plotBezierOnCanvas(points);
+  plotBezier(points);
 }
 
-function plotBezierOnCanvas() {
+function plotBezier() {
   context.moveTo(points[0].x, points[0].y);
-  const localAcc = document.getElementById('accuracy').value + 0;
 
-  for (let i = 0; i < 1; i += parseFloat(localAcc)) {
-    let p = calcBezier(i, { ...points[0] }, { ...points[1] }, { ...points[2] }, { ...points[3] });
+  const quality = document.getElementById('accuracy').value + 0;
+
+  for (let i = 0; i < 1; i += parseFloat(quality)) {
+    let p = findBezier(i, { ...points[0] }, { ...points[1] }, { ...points[2] }, { ...points[3] });
     context.lineTo(p.x, p.y);
   }
 
@@ -121,17 +122,17 @@ function resetPoints() {
   points = [];
 }
 
-function calcBezier(t, p0, p1, p2, p3) {
-  const cX = 3 * (p1.x - p0.x);
-  const bX = 3 * (p2.x - p1.x) - cX;
-  const aX = p3.x - p0.x - cX - bX;
+function findBezier(t, pointZero, pointOne, pointTwo, pointThree) {
+  const cX = 3 * (pointOne.x - pointZero.x);
+  const bX = 3 * (pointTwo.x - pointOne.x) - cX;
+  const aX = pointThree.x - pointZero.x - cX - bX;
 
-  const cY = 3 * (p1.y - p0.y);
-  const bY = 3 * (p2.y - p1.y) - cY;
-  const aY = p3.y - p0.y - cY - bY;
+  const cY = 3 * (pointOne.y - pointZero.y);
+  const bY = 3 * (pointTwo.y - pointOne.y) - cY;
+  const aY = pointThree.y - pointZero.y - cY - bY;
 
-  const x = aX * Math.pow(t, 3) + bX * Math.pow(t, 2) + cX * t + p0.x;
-  const y = aY * Math.pow(t, 3) + bY * Math.pow(t, 2) + cY * t + p0.y;
+  const x = aX * Math.pow(t, 3) + bX * Math.pow(t, 2) + cX * t + pointZero.x;
+  const y = aY * Math.pow(t, 3) + bY * Math.pow(t, 2) + cY * t + pointZero.y;
 
   return {
     x: x,
